@@ -54,14 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 showCreateAlbumDialog();
             }
         });
-
-        Button deleteAlbumButton = findViewById(R.id.delete_album_button);
-        deleteAlbumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle delete album button click
-            }
-        });
     }
 
     private void showCreateAlbumDialog() {
@@ -112,22 +104,74 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
     private void addAlbumToScrollView(Album album) {
+        // Create a horizontal layout to hold the album name, delete button, and open button
+        LinearLayout albumLayout = new LinearLayout(this);
+        albumLayout.setOrientation(LinearLayout.HORIZONTAL);
+        albumLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        // Create a text view for the album name
         TextView albumTextView = new TextView(this);
         albumTextView.setText(album.getName());
         albumTextView.setTextSize(24);
         albumTextView.setPadding(0, 24, 0, 24);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        albumTextView.setLayoutParams(textParams);
 
-        albumTextView.setOnClickListener(new View.OnClickListener() {
+        // Create a delete button
+        Button deleteButton = new Button(this);
+        deleteButton.setText("Delete");
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        deleteButton.setLayoutParams(buttonParams);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle album click
+                showDeleteAlbumDialog(album);
             }
         });
 
-        albumListLayout.addView(albumTextView);
+        // Create an open button
+        Button openButton = new Button(this);
+        openButton.setText("Open");
+        openButton.setLayoutParams(buttonParams);
+        openButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle open button click
+            }
+        });
+
+        // Add the views to the album layout
+        albumLayout.addView(albumTextView);
+        albumLayout.addView(openButton);
+        albumLayout.addView(deleteButton);
+
+        // Add the album layout to the scroll view
+        albumListLayout.addView(albumLayout);
     }
+
+    private void showDeleteAlbumDialog(Album album) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Album");
+        builder.setMessage("Are you sure you want to delete this album?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                albums.remove(album);
+                saveAlbums();
+                albumListLayout.removeAllViews();
+                for (Album album : albums) {
+                    addAlbumToScrollView(album);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
     private void saveAlbums() {
         SharedPreferences prefs = getSharedPreferences(ALBUMS_PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
