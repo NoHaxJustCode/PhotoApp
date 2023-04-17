@@ -1,6 +1,7 @@
 package com.example.photoapp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -133,6 +135,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Create a rename button
+        Button renameButton = new Button(this);
+        renameButton.setText("Rename");
+        renameButton.setLayoutParams(buttonParams);
+        renameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show an input dialog to get the new name for the album
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Rename Album");
+
+                // Set up the input
+                final EditText input = new EditText(MainActivity.this);
+                input.setText(album.getName());
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newName = input.getText().toString();
+                        albumTextView.setText(newName);
+                        album.rename(newName);
+                        saveAlbums();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
         // Create an open button
         Button openButton = new Button(this);
         openButton.setText("Open");
@@ -140,13 +179,16 @@ public class MainActivity extends AppCompatActivity {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle open button click
+                Intent intent = new Intent(MainActivity.this, AlbumHome.class);
+                intent.putExtra("albumName", album.getName());
+                startActivity(intent);
             }
         });
 
         // Add the views to the album layout
         albumLayout.addView(albumTextView);
         albumLayout.addView(openButton);
+        albumLayout.addView(renameButton);
         albumLayout.addView(deleteButton);
 
         // Add the album layout to the scroll view

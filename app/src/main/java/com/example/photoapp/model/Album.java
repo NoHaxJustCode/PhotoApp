@@ -13,7 +13,8 @@ public class Album {
         this.photos = new ArrayList<>();
     }
 
-    public Album(String albumName, ArrayList<Photo> photos, ArrayList<Tag> tags) {
+    public void rename(String name) {
+        this.name = name;
     }
 
     public String getName() {

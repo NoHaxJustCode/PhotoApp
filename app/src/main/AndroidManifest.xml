@@ -20,6 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AlbumHome"
+            android:parentActivityName=".MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
