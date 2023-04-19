@@ -1,40 +1,31 @@
 package com.example.photoapp.model;
 
 import android.graphics.Bitmap;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Photo {
+public class Photo implements Serializable {
+    private SerializedImage image;
+    private ArrayList<Tag> tags;
+    private static final long serialVersionUID = 2345L;
 
-    private String filename;
-    private Bitmap image;
-    private List<Tag> tags;
 
-    public Photo(String filename, Bitmap image) {
-        this.filename = filename;
-        this.image = image;
-        this.tags = new ArrayList<>();
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public Bitmap getImage() {
-        return image;
-    }
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
+    public Photo(Bitmap image, ArrayList<Tag> tags) {
+        this.image = new SerializedImage(image);
+        this.tags = tags;
     }
 
     public List<Tag> getTags() {
         return tags;
     }
 
-}
+    public void setTags(ArrayList<Tag> tags) {
+        this.tags = tags;
+    }
 
+    public Bitmap getBitmap() {
+        return image.getBitmap();
+    }
+}

@@ -1,5 +1,6 @@
 package com.example.photoapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,9 +16,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.photoapp.model.Album;
+import com.example.photoapp.model.SaveLoadHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String ALBUMS_PREFS_NAME = "AlbumsPrefs";
     private static final String ALBUMS_KEY = "Albums";
 
+    private SaveLoadHandler saveLoadAlbums;
+    private Context context = this;
+    private String path;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +50,31 @@ public class MainActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.home_scroll_view);
         albumListLayout = findViewById(R.id.home_album_list);
 
+        path = this.getApplicationInfo().dataDir + "/data.dat";
+
+        File data = new File(path);
+        if (!data.exists() || !data.isFile()) {
+            try {
+                data.createNewFile();
+                albums = new ArrayList<Album>();
+                albums.add(new Album("stock"));
+                SaveLoadHandler.saveData(albums, path);
+            } catch (Exception exception) {
+                albums = new ArrayList<>();
+            }
+        }
         // Load saved albums at startup
-        albums = loadAlbums();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            albums = (ArrayList<Album>) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+        } catch (Exception exception) {
+            albums = new ArrayList<>();
+        }
+
+        saveLoadAlbums = new SaveLoadHandler();
 
         // Add each album to the scroll view
         for (Album album : albums) {
@@ -94,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 Album newAlbum = new Album(albumName);
                                 albums.add(newAlbum);
-                                saveAlbums();
+                                SaveLoadHandler.saveData(albums, path);
                                 addAlbumToScrollView(newAlbum);
                                 dialog.dismiss();
                             }
@@ -158,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                         String newName = input.getText().toString();
                         albumTextView.setText(newName);
                         album.rename(newName);
-                        saveAlbums();
+                        SaveLoadHandler.saveData(albums, path);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -181,9 +213,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AlbumHome.class);
                 intent.putExtra("albumName", album.getName());
+                intent.putExtra("album", album);
                 startActivity(intent);
             }
         });
+
 
         // Add the views to the album layout
         albumLayout.addView(albumTextView);
@@ -203,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 albums.remove(album);
-                saveAlbums();
+                SaveLoadHandler.saveData(albums, path);
                 albumListLayout.removeAllViews();
                 for (Album album : albums) {
                     addAlbumToScrollView(album);
@@ -213,25 +247,4 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
-
-    private void saveAlbums() {
-        SharedPreferences prefs = getSharedPreferences(ALBUMS_PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(albums);
-        editor.putString(ALBUMS_KEY, json);
-        editor.apply();
-    }
-
-    private List<Album> loadAlbums() {
-        SharedPreferences prefs = getSharedPreferences(ALBUMS_PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = prefs.getString(ALBUMS_KEY, null);
-        Type type = new TypeToken<List<Album>>() {}.getType();
-        if(json == null)
-            return new ArrayList<Album>();
-        return gson.fromJson(json, type);
-    }
-
-
 }

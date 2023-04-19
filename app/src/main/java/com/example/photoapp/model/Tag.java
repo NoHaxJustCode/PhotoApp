@@ -1,11 +1,12 @@
 package com.example.photoapp.model;
-public class Tag {
 
-    public static final String TYPE_PERSON = "Person";
-    public static final String TYPE_LOCATION = "Location";
+import java.io.Serializable;
 
+public class Tag implements Serializable {
     private String type;
     private String value;
+    private static final long serialVersionUID = 2345L;
+
 
     public Tag(String type, String value) {
         this.type = type;
@@ -19,6 +20,7 @@ public class Tag {
     public String getValue() {
         return value;
     }
-
 }
+
+
 
