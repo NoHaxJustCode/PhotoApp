@@ -12,21 +12,49 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/addPhotoButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Add"/>
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/slideshowButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            <Button
+                android:id="@+id/addPhotoButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add" />
+
+            <Button
+                android:id="@+id/removeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Slideshow"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/openButton"
+                android:layout_width="2dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Open" />
+
+            <Button
+                android:id="@+id/slideshowButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Slideshow" />
+        </LinearLayout>
 
     </LinearLayout>
 

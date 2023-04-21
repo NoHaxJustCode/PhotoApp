@@ -47,6 +47,8 @@ public class AlbumHome extends AppCompatActivity {
     private ListView photoListView;
     private Button addPhotoButton;
     private Button slideshowButton;
+    private Button removeButton;
+    private Button openButton;
 
     private Album album;
     private List<Album> albums;
