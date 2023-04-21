@@ -75,6 +75,8 @@ public class AlbumHome extends AppCompatActivity {
         photoListView = findViewById(R.id.photoListView);
         addPhotoButton = findViewById(R.id.addPhotoButton);
         slideshowButton = findViewById(R.id.slideshowButton);
+        removeButton = findViewById(R.id.removeButton);
+        openButton = findViewById(R.id.openButton);
 
         path = this.getApplicationInfo().dataDir + "/data.dat";
         File data = new File(path);
@@ -90,12 +92,17 @@ public class AlbumHome extends AppCompatActivity {
         }
         // Get the album from the intent or shared preferences
         String albumName = getIntent().getStringExtra("albumName");
+        int albumNumber = 0;
+        for(int i = 0; i<albums.size(); i++) {
+            if(albums.get(i).getName().equals(albumName))
+                albumNumber = i;
+        }
         for(Album a : albums) {
             if(a.getName().equals(albumName))
                 album = a;
         }
         photoList = album.getPhotos();
-        PhotoAdapter adapter = new PhotoAdapter(this, photoList);
+        PhotoAdapter adapter = new PhotoAdapter(this, albumNumber, path, albums);
         photoListView.setAdapter(adapter);
         if (!photoList.isEmpty()) {
             photoListView.setSelection(0);

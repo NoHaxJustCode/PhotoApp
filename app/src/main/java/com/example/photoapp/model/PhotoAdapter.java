@@ -2,21 +2,31 @@ package com.example.photoapp.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.photoapp.R;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoAdapter extends BaseAdapter {
     private List<Photo> photos;
     private Context context;
 
-    public PhotoAdapter(Context context, List<Photo> photos) {
+    private String path;
+    private List<Album> albums;
+
+    public PhotoAdapter(Context context, int currAlbum, String path, List<Album> albums) {
         this.context = context;
-        this.photos = photos;
+        this.photos = albums.get(currAlbum).getPhotos();
+        this.path = path;
+        this.albums = albums;
     }
 
     @Override
@@ -36,19 +46,35 @@ public class PhotoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
-        if (convertView == null) {
-            imageView = new ImageView(context);
-            imageView.setLayoutParams(new AbsListView.LayoutParams(100, 100)); // set the image size
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
-        } else {
-            imageView = (ImageView) convertView;
+        View view = convertView;
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.photo_item, parent, false);
         }
+
+        ImageView imageView = view.findViewById(R.id.image_view);
+        Button removeButton = view.findViewById(R.id.remove_button);
+        Button openButton = view.findViewById(R.id.open_button);
 
         Bitmap bitmap = photos.get(position).getBitmap();
         imageView.setImageBitmap(bitmap);
 
-        return imageView;
+        removeButton.setOnClickListener(v -> {
+            removePhoto(position);
+            notifyDataSetChanged();
+        });
+
+        openButton.setOnClickListener(v -> {
+            openPhoto(position);
+        });
+
+        return view;
+    }
+
+    private void openPhoto(int position) {
+    }
+
+    private void removePhoto(int position) {
+        photos.remove(position);
+        SaveLoadHandler.saveData(albums, path);
     }
 }

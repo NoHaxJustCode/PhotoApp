@@ -34,6 +34,10 @@ public class Album implements Serializable {
     public void deletePhoto(Photo photo) {
         photos.remove(photo);
     }
+
+    public void removePhotos(List<Photo> selectedPhotos) {
+        photos.remove(selectedPhotos);
+    }
 }
 
 
