@@ -1,6 +1,7 @@
 package com.example.photoapp.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.photoapp.PhotoActivity;
 import com.example.photoapp.R;
 
 import java.util.ArrayList;
@@ -18,12 +20,13 @@ import java.util.List;
 public class PhotoAdapter extends BaseAdapter {
     private List<Photo> photos;
     private Context context;
-
     private String path;
     private List<Album> albums;
+    private int currAlbum;
 
     public PhotoAdapter(Context context, int currAlbum, String path, List<Album> albums) {
         this.context = context;
+        this.currAlbum = currAlbum;
         this.photos = albums.get(currAlbum).getPhotos();
         this.path = path;
         this.albums = albums;
@@ -70,8 +73,13 @@ public class PhotoAdapter extends BaseAdapter {
         return view;
     }
 
-    private void openPhoto(int position) {
+    public void openPhoto(int position) {
+        Intent intent = new Intent(context, PhotoActivity.class);
+        intent.putExtra("position", position);
+        intent.putExtra("currAlbum", currAlbum);
+        context.startActivity(intent);
     }
+
 
     private void removePhoto(int position) {
         photos.remove(position);

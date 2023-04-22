@@ -23,6 +23,9 @@
         <activity android:name=".AlbumHome"
             android:parentActivityName=".MainActivity"
             android:exported="true" />
+        <activity android:name=".PhotoActivity"
+            android:parentActivityName=".AlbumHome"
+            android:exported="true" />
     </application>
 
 </manifest>
