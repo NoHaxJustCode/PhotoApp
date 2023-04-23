@@ -9,8 +9,8 @@ public class Tag implements Serializable {
 
 
     public Tag(String type, String value) {
-        this.type = type;
-        this.value = value;
+        this.type = type.toLowerCase();
+        this.value = value.toLowerCase();
     }
 
     public String getType() {
@@ -19,6 +19,10 @@ public class Tag implements Serializable {
 
     public String getValue() {
         return value;
+    }
+
+    public String toString()  {
+        return type.toUpperCase()+": "+value.toUpperCase();
     }
 }
 

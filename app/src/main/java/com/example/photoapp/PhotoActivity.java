@@ -1,15 +1,26 @@
 package com.example.photoapp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.photoapp.model.Album;
+import com.example.photoapp.model.Photo;
 import com.example.photoapp.model.SaveLoadHandler;
+import com.example.photoapp.model.Tag;
+import com.example.photoapp.model.TagAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +35,18 @@ public class PhotoActivity extends AppCompatActivity {
     private int currAlbum;
     private int position;
     private String path;
+    private ListView tagListView;
+    private Button moveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_open);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
 
         path = this.getApplicationInfo().dataDir + "/data.dat";
 
@@ -55,6 +73,9 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
         imageView = findViewById(R.id.photo_image);
+        tagListView = findViewById(R.id.tag_listview);
+        moveButton = findViewById(R.id.moveButton);
+
 
         // Extract extras from intent
         Bundle extras = getIntent().getExtras();
@@ -62,6 +83,8 @@ public class PhotoActivity extends AppCompatActivity {
             currAlbum = extras.getInt("currAlbum");
             position = extras.getInt("position");
         }
+
+        Button addTagButton = findViewById(R.id.add_tag_button);
 
         // Load the selected photo into the image view
         Bitmap bitmap = albums.get(currAlbum).getPhotos().get(position).getBitmap();
@@ -87,5 +110,67 @@ public class PhotoActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, albumNames);
         albumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         albumSpinner.setAdapter(albumAdapter);
+
+        Photo photo = albums.get(currAlbum).getPhotos().get(position);
+        List<Tag> tags = photo.getTags();
+        TagAdapter tagAdapter2 = new TagAdapter(PhotoActivity.this, tags, albums, currAlbum, path);
+        tagListView.setAdapter(tagAdapter2);
+
+        addTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get selected tag type and value
+                String tagType = tagTypeSpinner.getSelectedItem().toString();
+                EditText tagValueEditText = findViewById(R.id.tag_value_edittext);
+                String tagValue = tagValueEditText.getText().toString();
+
+                // Add tag to photo
+                Photo photo = albums.get(currAlbum).getPhotos().get(position);
+                Tag tag = new Tag(tagType, tagValue);
+
+                // Check if tag already exists
+                if (!photo.containsTag(tag)) {
+                    photo.addTag(tag);
+
+                    // Save data
+                    SaveLoadHandler.saveData(albums, path);
+
+                    // Update tag list view
+                    List<Tag> tags = photo.getTags();
+                    TagAdapter tagAdapter = new TagAdapter(PhotoActivity.this, tags, albums, currAlbum, path);
+                    tagListView.setAdapter(tagAdapter);
+                }
+            }
+        });
+        Button moveButton = findViewById(R.id.moveButton);
+        moveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get selected album name
+                Spinner albumSpinner = findViewById(R.id.album_spinner);
+                String selectedAlbumName = albumSpinner.getSelectedItem().toString();
+
+                // Move photo to selected album and delete from current album
+                Album selectedAlbum = null;
+                for (Album album : albums) {
+                    if (album.getName().equals(selectedAlbumName)) {
+                        selectedAlbum = album;
+                        break;
+                    }
+                }
+                if (selectedAlbum != null) {
+                    Photo photo = albums.get(currAlbum).getPhotos().get(position);
+                    selectedAlbum.addPhoto(photo);
+                    albums.get(currAlbum).removePhoto(photo);
+                    SaveLoadHandler.saveData(albums, path);
+
+                    // Return to AlbumHome scene
+                    Intent intent = new Intent(PhotoActivity.this, AlbumHome.class);
+                    intent.putExtra("albumName", albums.get(currAlbum).getName());
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
     }
 }

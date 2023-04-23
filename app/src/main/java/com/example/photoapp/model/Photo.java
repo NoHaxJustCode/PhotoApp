@@ -28,4 +28,20 @@ public class Photo implements Serializable {
     public Bitmap getBitmap() {
         return image.getBitmap();
     }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void deleteTag(Tag tag) {
+        tags.remove(tag);
+    }
+
+    public boolean containsTag(Tag tag) {
+        for(Tag t : tags) {
+            if(t.toString().equals(tag.toString()))
+                return true;
+        }
+        return false;
+    }
 }

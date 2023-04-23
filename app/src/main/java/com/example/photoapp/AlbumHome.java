@@ -75,8 +75,6 @@ public class AlbumHome extends AppCompatActivity {
         photoListView = findViewById(R.id.photoListView);
         addPhotoButton = findViewById(R.id.addPhotoButton);
         slideshowButton = findViewById(R.id.slideshowButton);
-        removeButton = findViewById(R.id.removeButton);
-        openButton = findViewById(R.id.openButton);
 
         path = this.getApplicationInfo().dataDir + "/data.dat";
         File data = new File(path);
