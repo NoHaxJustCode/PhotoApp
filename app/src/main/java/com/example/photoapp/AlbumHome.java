@@ -1,6 +1,7 @@
 package com.example.photoapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -123,8 +124,11 @@ public class AlbumHome extends AppCompatActivity {
 
         slideshowButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Handle slideshow button click
+            public void onClick(View view) {
+                // Start the SlideshowActivity with the selected album name
+                Intent intent = new Intent(AlbumHome.this, SlideshowActivity.class);
+                intent.putExtra("albumName", album.getName());
+                startActivity(intent);
             }
         });
     }
