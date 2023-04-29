@@ -44,4 +44,27 @@ public class Photo implements Serializable {
         }
         return false;
     }
+
+    public ArrayList<String> getTagValues(String selectedCategory) {
+        ArrayList<String> values = new ArrayList<>();
+        for(Tag t : tags) {
+            if(t.getType().equals(selectedCategory)) {
+                values.add(t.getValue());
+            }
+        }
+        return values;
+    }
+
+    public boolean hasTagType(String selectedCategory) {
+        return true;
+    }
+
+    public boolean hasTag(String selectedCategory, String value) {
+        for(Tag t : tags) {
+            if(t.getType().equalsIgnoreCase(selectedCategory) && t.getValue().equalsIgnoreCase(value)) {
+               return true;
+            }
+        }
+        return false;
+    }
 }

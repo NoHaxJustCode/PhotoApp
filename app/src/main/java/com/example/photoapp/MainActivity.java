@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private SaveLoadHandler saveLoadAlbums;
     private Context context = this;
     private String path;
-
+    private Button searchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.home_title);
         scrollView = findViewById(R.id.home_scroll_view);
         albumListLayout = findViewById(R.id.home_album_list);
+        searchButton = findViewById(R.id.searchButton);
 
         path = this.getApplicationInfo().dataDir + "/data.dat";
 
@@ -86,6 +87,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showCreateAlbumDialog();
+            }
+        });
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("currAlbum", 0);
+                startActivity(intent);
             }
         });
     }

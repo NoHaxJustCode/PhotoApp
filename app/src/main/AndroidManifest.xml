@@ -29,6 +29,9 @@
         <activity android:name=".SlideshowActivity"
             android:parentActivityName=".AlbumHome"
             android:exported="true" />
+        <activity android:name=".SearchActivity"
+            android:parentActivityName=".AlbumHome"
+            android:exported="true" />
     </application>
 
 </manifest>
