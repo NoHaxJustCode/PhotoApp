@@ -3,7 +3,9 @@ package com.example.photoapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -139,15 +141,24 @@ public class AlbumHome extends AppCompatActivity {
         }
         // Get the bitmap of the selected photo
         Bitmap bitmap = null;
+        String fileName = "";
         try {
             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+            String[] projection = {MediaStore.Images.Media.DISPLAY_NAME};
+            Cursor cursor = getContentResolver().query(photoUri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+                fileName = cursor.getString(columnIndex);
+                cursor.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+
         // Create a new Photo object and add it to the album
         if (bitmap != null) {
-            Photo photo = new Photo(bitmap, new ArrayList<>());
+            Photo photo = new Photo(bitmap, fileName, new ArrayList<>());
             album.addPhoto(photo);
             adapter.notifyDataSetChanged();
             SaveLoadHandler.saveData(albums, path);

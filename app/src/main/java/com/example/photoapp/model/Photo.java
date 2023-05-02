@@ -10,16 +10,20 @@ public class Photo implements Serializable {
     private SerializedImage image;
     private ArrayList<Tag> tags;
     private static final long serialVersionUID = 2345L;
+    private String name;
 
 
-    public Photo(Bitmap image, ArrayList<Tag> tags) {
+    public Photo(Bitmap image, String name, ArrayList<Tag> tags) {
         this.image = new SerializedImage(image);
         this.tags = tags;
+        this.name = name;
     }
 
     public List<Tag> getTags() {
         return tags;
     }
+
+    public String getName() { return name; }
 
     public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;

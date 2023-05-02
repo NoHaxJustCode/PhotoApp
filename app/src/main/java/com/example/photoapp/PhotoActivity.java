@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +32,7 @@ import java.util.List;
 public class PhotoActivity extends AppCompatActivity {
 
     private ImageView imageView;
+    private TextView textView;
     private List<Album> albums;
     private int currAlbum;
     private int position;
@@ -75,6 +77,7 @@ public class PhotoActivity extends AppCompatActivity {
         imageView = findViewById(R.id.photo_image);
         tagListView = findViewById(R.id.tag_listview);
         moveButton = findViewById(R.id.moveButton);
+        textView = findViewById(R.id.textView);
 
 
         // Extract extras from intent
@@ -112,6 +115,7 @@ public class PhotoActivity extends AppCompatActivity {
         albumSpinner.setAdapter(albumAdapter);
 
         Photo photo = albums.get(currAlbum).getPhotos().get(position);
+        textView.setText(photo.getName());
         List<Tag> tags = photo.getTags();
         TagAdapter tagAdapter2 = new TagAdapter(PhotoActivity.this, tags, albums, currAlbum, path);
         tagListView.setAdapter(tagAdapter2);
